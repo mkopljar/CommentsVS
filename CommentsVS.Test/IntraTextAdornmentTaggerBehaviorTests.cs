@@ -18,7 +18,7 @@ public sealed class IntraTextAdornmentTaggerBehaviorTests
             (60, 80)
         };
 
-        (int start, int end) = AggregateRange(ranges);
+        (var start, var end) = AggregateRange(ranges);
 
         Assert.AreEqual(5, start);
         Assert.AreEqual(130, end);
@@ -29,7 +29,7 @@ public sealed class IntraTextAdornmentTaggerBehaviorTests
     {
         var ranges = new List<(int Start, int End)> { (10, 25) };
 
-        (int start, int end) = AggregateRange(ranges);
+        (var start, var end) = AggregateRange(ranges);
 
         Assert.AreEqual(10, start);
         Assert.AreEqual(25, end);
@@ -80,7 +80,7 @@ public sealed class IntraTextAdornmentTaggerBehaviorTests
 
         for (var i = 1; i < ranges.Count; i++)
         {
-            (int currentStart, int currentEnd) = ranges[i];
+            (var currentStart, var currentEnd) = ranges[i];
             if (currentStart < start)
             {
                 start = currentStart;

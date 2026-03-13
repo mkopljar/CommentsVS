@@ -19,7 +19,6 @@ jobs:
     name: Build
     runs-on: windows-latest
     env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       Configuration: Release
       DeployExtension: False
       VsixManifestPath: src\source.extension.vsixmanifest
@@ -33,6 +32,14 @@ jobs:
 
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.slnx', '**/*.sln', '**/*.csproj', '**/packages.config', '**/packages.lock.json', '**/nuget.config') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
 
     - name: Increment VSIX version
       id: vsix_version

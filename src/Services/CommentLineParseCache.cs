@@ -106,7 +106,7 @@ namespace CommentsVS.Services
         {
             var end = start + Math.Max(0, length);
 
-            foreach ((int spanStart, int spanLength) in commentSpans)
+            foreach ((var spanStart, var spanLength) in commentSpans)
             {
                 var spanEnd = spanStart + spanLength;
                 if (start < spanEnd && end > spanStart)

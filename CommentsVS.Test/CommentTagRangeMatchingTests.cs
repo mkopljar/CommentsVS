@@ -208,7 +208,7 @@ public sealed class CommentTagRangeMatchingTests
 
     private static bool ContainsAnyKeywordInRange(string text, int start, int length, IReadOnlyList<string> keywords)
     {
-        foreach (string keyword in keywords)
+        foreach (var keyword in keywords)
         {
             if (text.IndexOf(keyword, start, length, StringComparison.OrdinalIgnoreCase) >= 0)
             {

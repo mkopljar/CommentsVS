@@ -247,18 +247,18 @@ namespace CommentsVS.ToolWindows
                         break;
                     }
 
-                    string currentDirectory = pendingDirectories.Pop();
+                    var currentDirectory = pendingDirectories.Pop();
 
                     try
                     {
-                        foreach (string directory in Directory.EnumerateDirectories(currentDirectory))
+                        foreach (var directory in Directory.EnumerateDirectories(currentDirectory))
                         {
                             if (ct.IsCancellationRequested)
                             {
                                 break;
                             }
 
-                            string folderName = Path.GetFileName(directory);
+                            var folderName = Path.GetFileName(directory);
                             if (!string.IsNullOrEmpty(folderName) && foldersToIgnore.Contains(folderName))
                             {
                                 continue;
@@ -267,14 +267,14 @@ namespace CommentsVS.ToolWindows
                             pendingDirectories.Push(directory);
                         }
 
-                        foreach (string filePath in Directory.EnumerateFiles(currentDirectory))
+                        foreach (var filePath in Directory.EnumerateFiles(currentDirectory))
                         {
                             if (ct.IsCancellationRequested)
                             {
                                 break;
                             }
 
-                            string extension = Path.GetExtension(filePath);
+                            var extension = Path.GetExtension(filePath);
                             if (!string.IsNullOrEmpty(extension) && extensionsToScan.Contains(extension))
                             {
                                 filesToScan.Add((filePath, solutionName));

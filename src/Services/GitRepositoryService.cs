@@ -199,7 +199,7 @@ namespace CommentsVS.Services
 
         private static string GetGitDirectoryCached(string filePath)
         {
-            if (_gitDirCache.TryGetValue(filePath, out string cachedGitDir))
+            if (_gitDirCache.TryGetValue(filePath, out var cachedGitDir))
             {
                 return string.Equals(cachedGitDir, NoGitDirectorySentinel, StringComparison.Ordinal)
                     ? null

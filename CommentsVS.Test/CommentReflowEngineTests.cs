@@ -81,6 +81,17 @@ public sealed class CommentReflowEngineTests
     }
 
     [TestMethod]
+    public void WrapText_XmlTagFollowedByPeriod_DoesNotInsertSpaceBeforePeriod()
+    {
+        var text = "Use <see cref=\"int\"/>.";
+
+        List<string> result = TestWrapText(text, maxWidth: 80);
+
+        Assert.HasCount(1, result);
+        Assert.AreEqual("Use <see cref=\"int\"/>.", result[0]);
+    }
+
+    [TestMethod]
     public void WrapText_VeryLongWord_PlacedOnOwnLine()
     {
         var text = "short ThisIsAVeryLongWordThatExceedsMaxWidth end";
@@ -378,17 +389,23 @@ public sealed class CommentReflowEngineTests
         foreach (var token in tokens)
         {
             var tokenLength = token.Length;
+            var needsLeadingSpace = RequiresLeadingSpace(token);
+            var separatorLength = needsLeadingSpace ? 1 : 0;
 
             if (currentLength == 0)
             {
                 currentLine.Append(token);
                 currentLength = tokenLength;
             }
-            else if (currentLength + 1 + tokenLength <= maxWidth)
+            else if (currentLength + separatorLength + tokenLength <= maxWidth)
             {
-                currentLine.Append(' ');
+                if (needsLeadingSpace)
+                {
+                    currentLine.Append(' ');
+                }
+
                 currentLine.Append(token);
-                currentLength += 1 + tokenLength;
+                currentLength += separatorLength + tokenLength;
             }
             else
             {
@@ -405,6 +422,25 @@ public sealed class CommentReflowEngineTests
         }
 
         return lines;
+    }
+
+    private static bool RequiresLeadingSpace(string token)
+    {
+        if (string.IsNullOrEmpty(token))
+        {
+            return false;
+        }
+
+        if (token.Length == 1)
+        {
+            return token[0] switch
+            {
+                '.' or ',' or ';' or ':' or '!' or '?' or ')' or ']' or '}' => false,
+                _ => true
+            };
+        }
+
+        return true;
     }
 
     /// <summary>

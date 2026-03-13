@@ -284,17 +284,23 @@ namespace CommentsVS.Services
             foreach (var token in tokens)
             {
                 var tokenLength = token.Length;
+                var needsLeadingSpace = RequiresLeadingSpace(token);
+                var separatorLength = needsLeadingSpace ? 1 : 0;
 
                 if (currentLength == 0)
                 {
                     currentLine.Append(token);
                     currentLength = tokenLength;
                 }
-                else if (currentLength + 1 + tokenLength <= maxWidth)
+                else if (currentLength + separatorLength + tokenLength <= maxWidth)
                 {
-                    currentLine.Append(' ');
+                    if (needsLeadingSpace)
+                    {
+                        currentLine.Append(' ');
+                    }
+
                     currentLine.Append(token);
-                    currentLength += 1 + tokenLength;
+                    currentLength += separatorLength + tokenLength;
                 }
                 else
                 {
@@ -311,6 +317,25 @@ namespace CommentsVS.Services
             }
 
             return lines;
+        }
+
+        private static bool RequiresLeadingSpace(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                return false;
+            }
+
+            if (token.Length == 1)
+            {
+                return token[0] switch
+                {
+                    '.' or ',' or ';' or ':' or '!' or '?' or ')' or ']' or '}' => false,
+                    _ => true
+                };
+            }
+
+            return true;
         }
 
         private static List<string> TokenizeWithXmlTags(string text)

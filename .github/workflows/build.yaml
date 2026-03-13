@@ -34,7 +34,7 @@ jobs:
       uses: microsoft/setup-msbuild@v2
 
     - name: Cache NuGet packages
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ~/.nuget/packages
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.slnx', '**/*.sln', '**/*.csproj', '**/packages.config', '**/packages.lock.json', '**/nuget.config') }}
@@ -55,7 +55,7 @@ jobs:
       run: dotnet vstest /_built/CommentsVS.Test.dll --logger "trx;LogFileName=test-results.trx"
 
     - name: Report test results
-      uses: dorny/test-reporter@v2
+      uses: dorny/test-reporter@v2.6.0
       if: ${{ always() && (github.event_name != 'pull_request_target' || github.event.pull_request.head.repo.full_name == github.repository) }}
       with:
         name: Test Results
@@ -63,7 +63,7 @@ jobs:
         reporter: dotnet-trx
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ github.event.repository.name }}.vsix
         path: /_built/**/*.vsix
@@ -79,7 +79,7 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Download Package artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v8
         with:
           name: ${{ github.event.repository.name }}.vsix
 

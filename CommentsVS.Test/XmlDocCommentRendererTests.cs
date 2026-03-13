@@ -665,5 +665,27 @@ public sealed class XmlDocCommentRendererTests
         Assert.AreEqual("path", paramSection.Name);
     }
 
+    [TestMethod]
+    public void RenderXmlContent_MalformedXml_FallsBackToPlainTextSummary()
+    {
+        var xml = "<summary>Broken <c>tag";
+
+        RenderedComment result = XmlDocCommentRenderer.RenderXmlContent(xml);
+
+        Assert.IsNotNull(result.Summary);
+        List<RenderedSegment> summarySegments = [.. result.Summary!.Lines.SelectMany(l => l.Segments)];
+        Assert.IsTrue(summarySegments.Any(s => s.Text.Contains("Broken", StringComparison.Ordinal)));
+    }
+
+    [TestMethod]
+    public void GetStrippedSummaryFromXml_MalformedXml_StripsTagsAndReturnsText()
+    {
+        var xml = "<summary>Broken <c>tag";
+
+        var result = XmlDocCommentRenderer.GetStrippedSummaryFromXml(xml);
+
+        Assert.AreEqual("Broken tag", result);
+    }
+
     #endregion
 }

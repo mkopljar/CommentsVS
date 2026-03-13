@@ -21,6 +21,7 @@ jobs:
     name: Build
     runs-on: windows-latest
     env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       Configuration: Release
       DeployExtension: False
       VsixManifestPath: src\source.extension.vsixmanifest
@@ -66,6 +67,8 @@ jobs:
     if: ${{ github.event_name == 'push' || github.event_name == 'workflow_dispatch' }}
     needs: build
     runs-on: windows-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - uses: actions/checkout@v5

@@ -281,6 +281,40 @@ public sealed class LinkAnchorParserTests
     }
 
     [TestMethod]
+    public void Parse_LinkKeywordWithNoTarget_ParsesColonAsFallbackPath()
+    {
+        var text = "// LINK:";
+
+        IReadOnlyList<LinkAnchorInfo> results = LinkAnchorParser.Parse(text);
+
+        Assert.HasCount(1, results);
+        Assert.AreEqual(":", results[0].FilePath);
+        Assert.IsFalse(results[0].HasLineNumber);
+    }
+
+    [TestMethod]
+    public void Parse_LocalAnchorWithoutName_ReturnsEmptyList()
+    {
+        var text = "// LINK: #";
+
+        IReadOnlyList<LinkAnchorInfo> results = LinkAnchorParser.Parse(text);
+
+        Assert.IsEmpty(results);
+    }
+
+    [TestMethod]
+    public void Parse_ColonBeforeLineWithoutPath_ParsesFallbackPathAndLine()
+    {
+        var text = "// LINK: :42";
+
+        IReadOnlyList<LinkAnchorInfo> results = LinkAnchorParser.Parse(text);
+
+        Assert.HasCount(1, results);
+        Assert.AreEqual("", results[0].FilePath);
+        Assert.AreEqual(42, results[0].LineNumber);
+    }
+
+    [TestMethod]
     public void Parse_MultipleLinks_ReturnsAll()
     {
         // Multiple LINKs on separate lines (most common case)

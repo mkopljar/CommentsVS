@@ -1,4 +1,4 @@
-﻿using CommentsVS;
+using CommentsVS;
 
 using System.Reflection;
 using System.Runtime.InteropServices;

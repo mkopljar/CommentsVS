@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSTest.Sdk/4.0.1">
+<Project Sdk="MSTest.Sdk/4.0.1">
 
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
@@ -11,5 +11,4 @@
   <ItemGroup>
     <ProjectReference Include="..\src\CommentsVS.csproj" />
   </ItemGroup>
-
 </Project>

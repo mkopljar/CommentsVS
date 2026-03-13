@@ -45,7 +45,15 @@ jobs:
       run: msbuild /v:m -restore /p:OutDir=\_built
 
     - name: Run tests
-      run: dotnet vstest /_built/CommentsVS.Test.dll
+      run: dotnet vstest /_built/CommentsVS.Test.dll --logger "trx;LogFileName=test-results.trx"
+
+    - name: Report test results
+      uses: dorny/test-reporter@v1
+      if: always()
+      with:
+        name: Test Results
+        path: '**/test-results.trx'
+        reporter: dotnet-trx
 
     - name: Upload artifact
       uses: actions/upload-artifact@v5

@@ -104,6 +104,42 @@ public sealed class CommentTagRangeMatchingTests
         Assert.AreEqual("HACK".Length, tagSpans[0].Length);
     }
 
+    [TestMethod]
+    public void RangeMatching_InlineBlockComment_TagOffsetCorrect()
+    {
+        const string text = "var x = 1; /* REVIEW: verify this branch */";
+
+        List<(int Start, int Length)> tagSpans = ExtractTagSpans(text);
+
+        Assert.AreEqual(1, tagSpans.Count);
+        Assert.AreEqual(text.IndexOf("REVIEW", StringComparison.Ordinal), tagSpans[0].Start);
+        Assert.AreEqual("REVIEW".Length, tagSpans[0].Length);
+    }
+
+    [TestMethod]
+    public void RangeMatching_MixedCaseTagInComment_DetectedCaseInsensitively()
+    {
+        const string text = "int x = 0; // ToDo: mixed case";
+
+        List<(int Start, int Length)> tagSpans = ExtractTagSpans(text);
+
+        Assert.AreEqual(1, tagSpans.Count);
+        Assert.AreEqual(text.IndexOf("ToDo", StringComparison.Ordinal), tagSpans[0].Start);
+        Assert.AreEqual("ToDo".Length, tagSpans[0].Length);
+    }
+
+    [TestMethod]
+    public void RangeMatching_TagWithoutColon_Detected()
+    {
+        const string text = "var x = 1; // TODO follow-up needed";
+
+        List<(int Start, int Length)> tagSpans = ExtractTagSpans(text);
+
+        Assert.AreEqual(1, tagSpans.Count);
+        Assert.AreEqual(text.IndexOf("TODO", StringComparison.Ordinal), tagSpans[0].Start);
+        Assert.AreEqual("TODO".Length, tagSpans[0].Length);
+    }
+
     private static List<(int Start, int Length)> ExtractTagSpans(string text)
     {
         List<(int Start, int Length)> spans = [];

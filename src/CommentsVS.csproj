@@ -128,12 +128,14 @@
     <Compile Include="Tagging\LinkAnchorValidationTagger.cs" />
     <Compile Include="Tagging\XmlDocCommentOutliningTagger.cs" />
     <Compile Include="ToolWindows\AnchorCacheSerializer.cs" />
+    <Compile Include="ToolWindows\AnchorColorService.cs" />
     <Compile Include="ToolWindows\AnchorItem.cs" />
     <Compile Include="ToolWindows\AnchorNavigationService.cs" />
     <Compile Include="ToolWindows\AnchorScope.cs" />
     <Compile Include="ToolWindows\AnchorScopeFilter.cs" />
     <Compile Include="ToolWindows\AnchorService.cs" />
     <Compile Include="ToolWindows\AnchorType.cs" />
+    <Compile Include="ToolWindows\AnchorTypeToColorConverter.cs" />
     <Compile Include="ToolWindows\CodeAnchorsControl.xaml.cs">
       <DependentUpon>CodeAnchorsControl.xaml</DependentUpon>
     </Compile>

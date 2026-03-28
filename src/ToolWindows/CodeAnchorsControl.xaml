@@ -12,6 +12,9 @@
          Background="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}"
          Foreground="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}">
 <UserControl.Resources>
+    
+    <!-- Converter for AnchorType to Color -->
+    <local:AnchorTypeToColorConverter x:Key="AnchorTypeToColorConverter"/>
         
     <!-- DataGrid Cell Style -->
     <Style TargetType="DataGridCell">
@@ -98,8 +101,10 @@
                 <DataGridTemplateColumn Header="" Width="24" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Ellipse x:Name="AnchorIcon" Width="10" Height="10" 
-                                     HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="10" Height="10" 
+                                     Fill="{Binding AnchorType, Converter={StaticResource AnchorTypeToColorConverter}}"
+                                     HorizontalAlignment="Center" 
+                                     VerticalAlignment="Center"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

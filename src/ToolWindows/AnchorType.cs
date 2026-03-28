@@ -3,6 +3,7 @@ using CommentsVS.Options;
 using CommentsVS.Services;
 using Microsoft.VisualStudio.Imaging;
 using Microsoft.VisualStudio.Imaging.Interop;
+using Community.VisualStudio.Toolkit;
 
 namespace CommentsVS.ToolWindows
 {
@@ -27,6 +28,8 @@ namespace CommentsVS.ToolWindows
     /// </summary>
     public static class AnchorTypeExtensions
     {
+        private static AnchorColorService _colorService;
+
         /// <summary>
         /// Gets the display name for the anchor type.
         /// </summary>
@@ -51,6 +54,26 @@ namespace CommentsVS.ToolWindows
         /// Gets the color for the anchor type, matching the editor classification colors.
         /// </summary>
         public static Color GetColor(this AnchorType anchorType)
+        {
+            // Get the MEF service on first use
+            if (_colorService == null)
+            {
+                _colorService = VS.GetMefService<AnchorColorService>();
+            }
+
+            if (_colorService != null)
+            {
+                return _colorService.GetColor(anchorType);
+            }
+
+            // Fallback if service not available
+            return GetFallbackColor(anchorType);
+        }
+
+        /// <summary>
+        /// Gets the default fallback color for the anchor type.
+        /// </summary>
+        private static Color GetFallbackColor(AnchorType anchorType)
         {
             return anchorType switch
             {
@@ -113,51 +136,51 @@ namespace CommentsVS.ToolWindows
             };
         }
 
-                /// <summary>
-                /// Parses a string to an <see cref="AnchorType"/>, including custom tags.
-                /// </summary>
-                /// <param name="value">The string value (case-insensitive).</param>
-                /// <param name="filePath">The file path for .editorconfig lookup.</param>
-                /// <param name="customTagName">If the tag is a custom tag, outputs the tag name in uppercase.</param>
-                /// <returns>The parsed anchor type, or null if not recognized.</returns>
-                public static AnchorType? ParseWithCustom(string value, string filePath, out string customTagName)
-                {
-                    customTagName = null;
+        /// <summary>
+        /// Parses a string to an <see cref="AnchorType"/>, including custom tags.
+        /// </summary>
+        /// <param name="value">The string value (case-insensitive).</param>
+        /// <param name="filePath">The file path for .editorconfig lookup.</param>
+        /// <param name="customTagName">If the tag is a custom tag, outputs the tag name in uppercase.</param>
+        /// <returns>The parsed anchor type, or null if not recognized.</returns>
+        public static AnchorType? ParseWithCustom(string value, string filePath, out string customTagName)
+        {
+            customTagName = null;
 
-                    if (string.IsNullOrEmpty(value))
-                    {
-                        return null;
-                    }
-
-                    var upperValue = value.ToUpperInvariant();
-
-                    // Check built-in tags first
-                    AnchorType? builtInType = upperValue switch
-                    {
-                        "TODO" => AnchorType.Todo,
-                        "HACK" => AnchorType.Hack,
-                        "NOTE" => AnchorType.Note,
-                        "BUG" => AnchorType.Bug,
-                        "FIXME" => AnchorType.Fixme,
-                        "UNDONE" => AnchorType.Undone,
-                        "REVIEW" => AnchorType.Review,
-                        "ANCHOR" => AnchorType.Anchor,
-                        _ => null
-                    };
-
-                    if (builtInType != null)
-                    {
-                        return builtInType;
-                    }
-
-                    // Check if it's a custom tag (from .editorconfig or Options page)
-                    if (EditorConfigSettings.GetCustomAnchorTags(filePath).Contains(upperValue))
-                    {
-                        customTagName = upperValue;
-                        return AnchorType.Custom;
-                    }
-
-                    return null;
-                }
+            if (string.IsNullOrEmpty(value))
+            {
+                return null;
             }
+
+            var upperValue = value.ToUpperInvariant();
+
+            // Check built-in tags first
+            AnchorType? builtInType = upperValue switch
+            {
+                "TODO" => AnchorType.Todo,
+                "HACK" => AnchorType.Hack,
+                "NOTE" => AnchorType.Note,
+                "BUG" => AnchorType.Bug,
+                "FIXME" => AnchorType.Fixme,
+                "UNDONE" => AnchorType.Undone,
+                "REVIEW" => AnchorType.Review,
+                "ANCHOR" => AnchorType.Anchor,
+                _ => null
+            };
+
+            if (builtInType != null)
+            {
+                return builtInType;
+            }
+
+            // Check if it's a custom tag (from .editorconfig or Options page)
+            if (EditorConfigSettings.GetCustomAnchorTags(filePath).Contains(upperValue))
+            {
+                customTagName = upperValue;
+                return AnchorType.Custom;
+            }
+
+            return null;
         }
+    }
+}

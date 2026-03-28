@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Microsoft.VisualStudio.Shell;
 
 namespace CommentsVS.ToolWindows
 {
@@ -45,9 +46,6 @@ namespace CommentsVS.ToolWindows
             {
                 IsEnabled = false
             };
-
-            // Set up icon binding after data grid is loaded
-            AnchorDataGrid.LoadingRow += AnchorDataGrid_LoadingRow;
 
             RefreshViewAndStatus();
         }
@@ -355,44 +353,6 @@ namespace CommentsVS.ToolWindows
             {
                 AnchorActivated?.Invoke(this, SelectedAnchor);
             }
-        }
-
-        private void AnchorDataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
-        {
-            if (e.Row.Item is AnchorItem anchor)
-            {
-                // Find the Ellipse in the row and set its fill color based on anchor type
-                // Use LayoutUpdated event to ensure the visual tree is ready
-                void OnLayoutUpdated(object s, EventArgs args)
-                {
-                    e.Row.LayoutUpdated -= OnLayoutUpdated;
-                    System.Windows.Shapes.Ellipse ellipse = FindVisualChild<System.Windows.Shapes.Ellipse>(e.Row);
-                    if (ellipse != null)
-                    {
-                        ellipse.Fill = new System.Windows.Media.SolidColorBrush(anchor.AnchorType.GetColor());
-                    }
-                }
-                e.Row.LayoutUpdated += OnLayoutUpdated;
-            }
-        }
-
-        private static T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
-        {
-            for (var i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent); i++)
-            {
-                DependencyObject child = System.Windows.Media.VisualTreeHelper.GetChild(parent, i);
-                if (child is T found)
-                {
-                    return found;
-                }
-
-                T result = FindVisualChild<T>(child);
-                if (result != null)
-                {
-                    return result;
-                }
-            }
-            return null;
         }
     }
 }
